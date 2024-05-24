@@ -1,0 +1,19 @@
+name: server-from-scratch
+
+services:
+  nginx:
+    image: nginx
+    volumes:
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
+    ports: 
+      - "8000:80"
+  web:
+    image: ruby
+    build: .
+    develop:
+      watch:
+        - action: sync+restart
+          path: app/
+          target: /app/app/

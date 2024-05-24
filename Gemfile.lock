@@ -1,0 +1,26 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    base64 (0.2.0)
+    dotenv (3.1.2)
+    minitest (5.23.1)
+    nio4r (2.7.3)
+    puma (6.4.2)
+      nio4r (~> 2.0)
+    rack (3.0.11)
+    rake (13.2.1)
+
+PLATFORMS
+  ruby
+  x86_64-linux
+
+DEPENDENCIES
+  base64 (~> 0.2.0)
+  dotenv (~> 3.1)
+  minitest (~> 5.23)
+  puma (~> 6.4)
+  rack (~> 3.0)
+  rake (~> 13.2)
+
+BUNDLED WITH
+   2.5.10
