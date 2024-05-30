@@ -1,9 +1,7 @@
-require "./app"
+require "./lib/app"
 
-run Rack::URLMap.new(
-  {
-    "/ws" => App::WebSocket::Handshake.new,
-    "/favicon.ico" => App::Favicon.new,
-    "/" => App::Index.new
-  }
-)
+use Rack::Reloader, 0
+use Rack::Static, :urls => ["/assets/js", "/assets/css"], :root => "lib"
+use Rack::Logger
+
+run App::Runner

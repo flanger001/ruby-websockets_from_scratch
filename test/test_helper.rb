@@ -1,2 +1,2 @@
-require "app"
+require "lib/app"
 require "minitest/autorun"

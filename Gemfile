@@ -11,3 +11,5 @@ gem "puma", "~> 6.4"
 gem "rack", "~> 3.0"
 
 gem "rake", "~> 13.2"
+
+gem "rackup", "~> 2.1"

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>WebSockets Test</title>
+    <script type="text/javascript" charset="utf-8">
+      window.locals ||= {}
+      window.locals["LOCAL_IP"] = "<%= local_ip %>"
+    </script>
+    <script src="/assets/js/app.js"></script>
+  </head>
+
+  <body style="font-family: Helvetica Neue, Helvetica, Arial, Sans-Serif; background: #111; color: #eee">
+    <h1>WebSockets test</h1>
+    <div style="height: 500px; overflow-y: auto; background: #222; color: #ddd">
+      <h2>Log</h2>
+      <div id="messages"></div>
+    </div>
+    <div style="margin-top: 50px;">
+      <input type="text" name="message" id="message" placeholder="Type message here..." />
+      <button type="button" id="send-message">Send message</button>
+    </div>
+    <div style="margin-top: 50px;">
+      <button type="button" id="close-connection">Close connection</button>
+      <button type="button" id="reopen-connection">Reopen connection</button>
+    </div>
+  </body>
+</html>

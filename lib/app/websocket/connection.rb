@@ -2,22 +2,18 @@ module App
   module WebSocket
     class Connection
       FRAMES = {
-        0x0 => :continuation, 
-        0x1 => :text, 
-        0x2 => :binary,
-        0x8 => :close,
-        0x9 => :ping,
-        0xA => :pong
+        :continuation => 0x0,
+        :text => 0x1,
+        :binary => 0x2,
+        :close => 0x8,
+        :ping => 0x9,
+        :pong => 0xA,
       }
 
-      def initialize
-        @sockets = []
-      end
-
       def call(socket)
-        @sockets.push(socket)
-        puts "Total connections: #{@sockets.length}"
-        socket.sendmsg(build_message("From server: Welcome!"), 0)
+        App.runtime.sockets.push(socket)
+        puts "Total connections: #{App.runtime.sockets.length}"
+        send_message(socket, "From server: Welcome!")
 
         loop do
           break if socket.closed?
@@ -32,14 +28,14 @@ module App
               fin_op = data[0]
               # puts "FIN, RSV, and OPCODES: #{"%08b" % fin_op}"
               # Keep building the message if our first bit is a continuation frame
-              assemble_message = fin_op & 0b10000000 == 0
+              assemble_message = fin_op[0][7] ^ FRAMES[:continuation] == 0
 
               # Close the connection if we receive an 0x8 opcode
-              close_connection = fin_op & 0b1000 != 0
+              close_connection = fin_op & FRAMES[:close] != 0
               break if close_connection
-              
+
               # Break if the mask bit is not set
-              break if data[1] & 0b10000000 == 0
+              break if data[1][7] & 0x1 == 0
 
               # Get message length
               payload_size = extract_payload_size(data)
@@ -54,16 +50,16 @@ module App
             full_client_message = full_client_message.join
             puts "Full client message: #{full_client_message}"
 
-            @sockets.each do |s|
-              unless socket.closed?
-                s.sendmsg(build_message("Greetings to you, too."), 0) if full_client_message.match?(/greetings/i)
-                s.sendmsg(build_message(full_client_message), 0)
+            App.runtime.sockets.each do |s|
+              unless s.closed?
+                send_message(s, "Greetings to you, too.") if full_client_message.match?(/greetings/i)
+                send_message(s, full_client_message)
               end
             end
 
             if full_client_message.match?(/close connection/i)
-              socket.sendmsg(build_message("Closing connection!"), 0)
-              socket.sendmsg(control_frame(0x8), 0)
+              send_message(socket, "Closing connection!")
+              send_control_frame(socket, 0x8)
               socket.close
             end
           end
@@ -80,7 +76,14 @@ module App
           socket.close
         end
 
-        @sockets.delete(socket)
+        App.runtime.sockets.delete(socket)
+      end
+
+      def send_message(socket, message)
+        socket.sendmsg(build_message(message), 0)
+      end
+      def send_control_frame(socket, opcode)
+        socket.sendmsg(control_frame(opcode), 0)
       end
 
       def extract_address(socket)
@@ -111,7 +114,7 @@ module App
             payload_size_start = 2
             payload_size_length = 8
           end
-          
+
           payload_size = data[payload_size_start, payload_size_length].
             each_with_index.
             reduce(0) { |sum, (byte, idx)| sum += (byte << (payload_size_length - 1 - idx) * 8) }

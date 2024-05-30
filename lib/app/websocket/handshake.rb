@@ -10,9 +10,8 @@ module App
             "Sec-WebSocket-Accept" => handshake(env["HTTP_SEC_WEBSOCKET_KEY"]),
             "Connection" => "Upgrade",
             "Upgrade" => "websocket",
-            "rack.hijack" => Connection.new
           },
-          []
+          Connection.new
         ]
       end
 

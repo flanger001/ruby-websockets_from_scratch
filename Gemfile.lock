@@ -8,7 +8,11 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     rack (3.0.11)
+    rackup (2.1.0)
+      rack (>= 3)
+      webrick (~> 1.8)
     rake (13.2.1)
+    webrick (1.8.1)
 
 PLATFORMS
   ruby
@@ -20,6 +24,7 @@ DEPENDENCIES
   minitest (~> 5.23)
   puma (~> 6.4)
   rack (~> 3.0)
+  rackup (~> 2.1)
   rake (~> 13.2)
 
 BUNDLED WITH
